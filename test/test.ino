@@ -1,3 +1,7 @@
+#include "FastLED.h"
+#define LED_SIZE 150
+#define LED_PIN 7
+
 struct RGB {
   byte r;
   byte g;
@@ -5,32 +9,20 @@ struct RGB {
   byte v;
 };
 
-#define LED_SIZE 150
-
 void setup() {
-  // put your setup code here, to run once:
   Serial.begin(9600);
-  
   RGB leds_state[LED_SIZE];
+  
   float curr_val = 0;
-  for(int i = 0; i < LED_SIZE; i++) {
+  for(size_t i = 0; i < LED_SIZE; i++) {
     RGB temp = {(byte)(curr_val + 0.5), 0, 0, 149 - i};
     leds_state[i] = temp;
     curr_val = curr_val + (256.0 / LED_SIZE);
   }
 
-  
-  for(int j = 0; j < LED_SIZE; j++) {
-   Serial.println("r: " + (String)leds_state[j].r);
-   Serial.println("v: " + (String)leds_state[j].v);
-  } 
-
+  print_array(leds_state, LED_SIZE);
   bubble_sort(leds_state, LED_SIZE);
-  Serial.println("SORTED ARRAY");
-  for(int j = 0; j < LED_SIZE; j++) {
-    Serial.println("r: " + (String)leds_state[j].r);
-    Serial.println("v: " + (String)leds_state[j].v);
-  } 
+  print_array(leds_state, LED_SIZE);
 }
 
 void loop() {
@@ -53,3 +45,11 @@ void bubble_sort(RGB arr[], int capacity) {
     }
   }
 }
+
+void print_array (RGB arr[], size_t capacity) { 
+  for (size_t i = 0; i < capacity; i++){
+    Serial.print(arr[i].v);
+    Serial.print(" ");
+  }
+  Serial.println();
+} 

@@ -1,9 +1,14 @@
+#include <Adafruit_NeoPixel.h>
+#define LED_SIZE 150
+#define PIN 6
+
 struct RGB {
   byte r;
   byte g;
   byte b;
   byte v;
 };
+
 #define LED_SIZE 150
 
 void setup() {
@@ -12,14 +17,22 @@ void setup() {
   
   float curr_val = 0;
   for(size_t i = 0; i < LED_SIZE; i++) {
-    RGB temp = {(byte)(curr_val + 0.5), 0, 0, 149 - i};
+    RGB temp = {(byte)(curr_val + 0.5), 0, 0, i};
     leds_state[i] = temp;
     curr_val = curr_val + (256.0 / LED_SIZE);
   }
-
+  
+  randomize(leds_state, LED_SIZE);
   print_array(leds_state, LED_SIZE);
   bubble_sort(leds_state, LED_SIZE);
   print_array(leds_state, LED_SIZE);
+
+  Adafruit_NeoPixel strip = Adafruit_NeoPixel(LED_SIZE, PIN, NEO_GRB + NEO_KHZ800);
+  strip.begin();
+  strip.show();
+  
+  strip.setPixelColor(10, strip.Color(255,0,0));  
+  strip.show();
 }
 
 void loop() {
