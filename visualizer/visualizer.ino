@@ -10,6 +10,7 @@ struct RGB {
 };
 
 #define LED_SIZE 150
+Adafruit_NeoPixel strip = Adafruit_NeoPixel(LED_SIZE, PIN, NEO_GRB + NEO_KHZ800);
 
 void setup() {
   Serial.begin(9600);
@@ -27,19 +28,30 @@ void setup() {
   bubble_sort(leds_state, LED_SIZE);
   print_array(leds_state, LED_SIZE);
 
-  Adafruit_NeoPixel strip = Adafruit_NeoPixel(LED_SIZE, PIN, NEO_GRB + NEO_KHZ800);
   strip.begin();
   strip.show();
-  
-  strip.setPixelColor(10, strip.Color(255,0,0));  
-  strip.show();
+  colorWipe(strip.Color(255, 0, 0), 50);
 }
 
 void loop() {
-  // put your main code here, to run repeatedly:
-
+  
 }
 
+void displayLED(RGB arr[], int capacity) {
+  for(int i =0; i < capacity; i++) {
+    strip.setPixelColor(i, strip.Color(arr[i].r, 0, 0));
+    strip.show();
+  }
+}
+
+// Fill the dots one after the other with a color
+void colorWipe(uint32_t c, uint8_t wait) {
+  for(uint16_t i=0; i<strip.numPixels(); i++) {
+      strip.setPixelColor(i, c);
+      strip.show();
+      delay(wait);
+  }
+}
 void swap (RGB &a, RGB &b) { 
   RGB temp = a; 
   a = b; 
