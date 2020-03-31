@@ -2,6 +2,8 @@
 #define LED_SIZE 150
 #define PIN 6
 
+Adafruit_NeoPixel strip = Adafruit_NeoPixel(LED_SIZE, PIN, NEO_GRB + NEO_KHZ800);
+
 struct RGB {
   byte r;
   byte g;
@@ -9,12 +11,9 @@ struct RGB {
   byte v;
 };
 
-#define LED_SIZE 150
-Adafruit_NeoPixel strip = Adafruit_NeoPixel(LED_SIZE, PIN, NEO_GRB + NEO_KHZ800);
-
 void setup() {
   Serial.begin(9600);
-  RGB leds_state[LED_SIZE];
+  RGB leds_state[LED_SIZE] = {{0,0,0,0}};
   
   float curr_val = 0;
   for(size_t i = 0; i < LED_SIZE; i++) {
@@ -37,14 +36,15 @@ void loop() {
   
 }
 
+// Sets all pixels to their value acording to leds_state[] and refreshes
 void displayLED(RGB arr[], int capacity) {
   for(int i =0; i < capacity; i++) {
-    strip.setPixelColor(i, strip.Color(arr[i].r, 0, 0));
-    strip.show();
+    strip.setPixelColor(i, strip.Color(arr[i].r, arr[i].g, arr[i].b));
   }
+  strip.show();
 }
 
-// Fill the dots one after the other with a color
+// Demo: Fill the dots one after the other with a color
 void colorWipe(uint32_t c, uint8_t wait) {
   for(uint16_t i=0; i<strip.numPixels(); i++) {
       strip.setPixelColor(i, c);
@@ -52,12 +52,15 @@ void colorWipe(uint32_t c, uint8_t wait) {
       delay(wait);
   }
 }
+
+// Basic swap function for RGB instances
 void swap (RGB &a, RGB &b) { 
   RGB temp = a; 
   a = b; 
   b = temp; 
 } 
 
+// Prints intended/sorted position of RGB instances in array
 void print_array (RGB arr[], size_t capacity) { 
   for (size_t i = 0; i < capacity; i++){
     Serial.print(arr[i].v);
@@ -66,6 +69,7 @@ void print_array (RGB arr[], size_t capacity) {
   Serial.println();
 } 
 
+// Suffles given array of RGB instances
 void randomize (RGB arr[], size_t capacity) { 
   for (size_t i = capacity - 1; i > 0; i--) { 
     size_t j = random(i);
@@ -73,6 +77,9 @@ void randomize (RGB arr[], size_t capacity) {
   } 
 } 
 
+// Sorting Algorithms
+
+// Basic bubble sort (O(n^2))
 void bubble_sort(RGB arr[], size_t capacity) {
   for(size_t i = 0; i < (capacity - 1); i++) {
     for(size_t j = 0; j < (capacity - (i + 1)); j ++) {
