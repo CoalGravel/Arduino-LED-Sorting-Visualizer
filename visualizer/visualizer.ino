@@ -5,10 +5,10 @@
 Adafruit_NeoPixel strip = Adafruit_NeoPixel(LED_SIZE, PIN, NEO_GRB + NEO_KHZ800);
 
 struct RGB {
-  int r;
-  int g;
-  int b;
-  int v;
+  byte r;
+  byte g;
+  byte b;
+  byte v;
 };
 
 void setup() {
@@ -24,7 +24,7 @@ void setup() {
   
   randomize(leds_state, LED_SIZE);
   print_array(leds_state, LED_SIZE);
-  insertion_sort(leds_state, LED_SIZE);
+  quick_sort(leds_state, LED_SIZE);
   print_array(leds_state, LED_SIZE);
 
   strip.begin();
@@ -70,7 +70,7 @@ void print_array (RGB arr[], size_t capacity) {
   Serial.println();
 } 
 
-// Suffles given array of RGB instances
+// Shuffles given array of RGB instances
 void randomize (RGB arr[], size_t capacity) { 
   for (size_t i = capacity - 1; i > 0; i--) { 
     size_t j = random(i);
@@ -78,6 +78,7 @@ void randomize (RGB arr[], size_t capacity) {
   } 
 } 
 
+// Helper function for quick_sort
 int partition(RGB arr[], size_t low, size_t high) {
   size_t pivot = arr[high].v;
   size_t i = (low - 1);
@@ -91,11 +92,19 @@ int partition(RGB arr[], size_t low, size_t high) {
   swap(arr[i+1], arr[high]);
   return (i + 1);
 }
+// Helper function for quick sort
+void quick_sort_recursive(RGB arr[], size_t low, size_t high) {
+  if(low < high) {
+    size_t p = partition(arr, low, high);
+
+    quick_sort_recursive(arr, low, p - 1);  
+    quick_sort_recursive(arr, p + 1, high); 
+  }
+}
 
 // Sorting Algorithms
 
-
-// Basic bubble sort (O(n^2))
+// Bubble sort (O(n^2))
 void bubble_sort(RGB arr[], size_t capacity) {
   for(size_t i = 0; i < (capacity - 1); i++) {
     for(size_t j = 0; j < (capacity - (i + 1)); j ++) {
@@ -106,7 +115,7 @@ void bubble_sort(RGB arr[], size_t capacity) {
   }
 }
 
-// Basic insertion sort (O(n^2))
+// Insertion sort (O(n^2))
 void insertion_sort(RGB arr[], size_t capacity) {
   RGB temp;
   size_t j;
@@ -137,11 +146,6 @@ void selection_sort(RGB arr[], size_t capacity) {
 
 
 //Quick sort (O(n*logn))
-void quick_sort(RGB arr[], size_t low, size_t high) {
-  if(low < high) {
-    size_t p = partition(arr, low, high);
-
-    quick_sort(arr, low, p - 1);  
-    quick_sort(arr, p + 1, high); 
-  }
+void quick_sort(RGB arr[], size_t capacity) {
+  quick_sort_recursive(arr, 0, capacity - 1);
 }
