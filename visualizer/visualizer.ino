@@ -5,10 +5,10 @@
 Adafruit_NeoPixel strip = Adafruit_NeoPixel(LED_SIZE, PIN, NEO_GRB + NEO_KHZ800);
 
 struct RGB {
-  byte r;
-  byte g;
-  byte b;
-  byte v;
+  int r;
+  int g;
+  int b;
+  int v;
 };
 
 void setup() {
@@ -24,7 +24,7 @@ void setup() {
   
   randomize(leds_state, LED_SIZE);
   print_array(leds_state, LED_SIZE);
-  bubble_sort(leds_state, LED_SIZE);
+  insertion_sort(leds_state, LED_SIZE);
   print_array(leds_state, LED_SIZE);
 
   strip.begin();
@@ -77,7 +77,9 @@ void randomize (RGB arr[], size_t capacity) {
   } 
 } 
 
+
 // Sorting Algorithms
+
 
 // Basic bubble sort (O(n^2))
 void bubble_sort(RGB arr[], size_t capacity) {
@@ -87,5 +89,20 @@ void bubble_sort(RGB arr[], size_t capacity) {
         swap(arr[j], arr[j+1]);
       }
     }
+  }
+}
+
+// Basic insertion sort (O(n^2))
+void insertion_sort(RGB arr[], size_t capacity) {
+  RGB temp;
+  size_t j;
+  for(size_t i = 1; i < capacity; i++) {
+    temp = arr[i];
+    j = i - 1;
+    while(j >= 0 && arr[j].v > temp.v) {
+      arr[j+1] = arr[j];
+      j--;
+    }
+    arr[j+1] = temp;
   }
 }
