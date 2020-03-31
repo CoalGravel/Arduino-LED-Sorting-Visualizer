@@ -60,6 +60,7 @@ void swap (RGB &a, RGB &b) {
   b = temp; 
 } 
 
+
 // Prints intended/sorted position of RGB instances in array
 void print_array (RGB arr[], size_t capacity) { 
   for (size_t i = 0; i < capacity; i++){
@@ -77,6 +78,19 @@ void randomize (RGB arr[], size_t capacity) {
   } 
 } 
 
+int partition(RGB arr[], size_t low, size_t high) {
+  size_t pivot = arr[high].v;
+  size_t i = (low - 1);
+
+  for(size_t j = low; j <= high - 1; j++) {
+    if(arr[j].v < pivot) {
+      i++;
+      swap(arr[i], arr[j]);
+    }
+  }
+  swap(arr[i+1], arr[high]);
+  return (i + 1);
+}
 
 // Sorting Algorithms
 
@@ -104,5 +118,30 @@ void insertion_sort(RGB arr[], size_t capacity) {
       j--;
     }
     arr[j+1] = temp;
+  }
+}
+
+//Selection sort (O(n^2))
+void selection_sort(RGB arr[], size_t capacity) {
+  size_t min_val;
+  for(size_t i = 0; i < capacity - 1; i++) {
+    min_val = i;
+    for(size_t j = i + 1; j < capacity; j++) {
+      if(arr[j].v < arr[min_val].v) {
+        min_val = j;
+      }
+    }
+    swap(arr[i], arr[min_val]);
+  }
+}
+
+
+//Quick sort (O(n*logn))
+void quick_sort(RGB arr[], size_t low, size_t high) {
+  if(low < high) {
+    size_t p = partition(arr, low, high);
+
+    quick_sort(arr, low, p - 1);  
+    quick_sort(arr, p + 1, high); 
   }
 }
