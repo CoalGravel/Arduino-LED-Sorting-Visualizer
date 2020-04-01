@@ -16,7 +16,7 @@ void setup() {
   RGB leds_state[LED_SIZE] = {{0,0,0,0}};
   
   float curr_val = 0;
-  for(size_t i = 0; i < LED_SIZE; i++) {
+  for(int i = 0; i < LED_SIZE; i++) {
     RGB temp = {(byte)(curr_val + 0.5), 0, 0, i};
     leds_state[i] = temp;
     curr_val = curr_val + (256.0 / LED_SIZE);
@@ -24,7 +24,7 @@ void setup() {
   
   randomize(leds_state, LED_SIZE);
   print_array(leds_state, LED_SIZE);
-  quick_sort(leds_state, LED_SIZE);
+  insertion_sort(leds_state, LED_SIZE);
   print_array(leds_state, LED_SIZE);
 
   strip.begin();
@@ -62,8 +62,8 @@ void swap (RGB &a, RGB &b) {
 
 
 // Prints intended/sorted position of RGB instances in array
-void print_array (RGB arr[], size_t capacity) { 
-  for (size_t i = 0; i < capacity; i++){
+void print_array (RGB arr[], int capacity) { 
+  for (int i = 0; i < capacity; i++){
     Serial.print(arr[i].v);
     Serial.print(" ");
   }
@@ -71,19 +71,19 @@ void print_array (RGB arr[], size_t capacity) {
 } 
 
 // Shuffles given array of RGB instances
-void randomize (RGB arr[], size_t capacity) { 
-  for (size_t i = capacity - 1; i > 0; i--) { 
-    size_t j = random(i);
+void randomize (RGB arr[], int capacity) { 
+  for (int i = capacity - 1; i > 0; i--) { 
+    int j = random(i);
     swap(arr[i], arr[j]); 
   } 
 } 
 
 // Helper function for quick_sort
-int partition(RGB arr[], size_t low, size_t high) {
-  size_t pivot = arr[high].v;
-  size_t i = (low - 1);
+int partition(RGB arr[], int low, int high) {
+  int pivot = arr[high].v;
+  int i = (low - 1);
 
-  for(size_t j = low; j <= high - 1; j++) {
+  for(int j = low; j <= high - 1; j++) {
     if(arr[j].v < pivot) {
       i++;
       swap(arr[i], arr[j]);
@@ -93,9 +93,9 @@ int partition(RGB arr[], size_t low, size_t high) {
   return (i + 1);
 }
 // Helper function for quick sort
-void quick_sort_recursive(RGB arr[], size_t low, size_t high) {
+void quick_sort_recursive(RGB arr[], int low, int high) {
   if(low < high) {
-    size_t p = partition(arr, low, high);
+    int p = partition(arr, low, high);
 
     quick_sort_recursive(arr, low, p - 1);  
     quick_sort_recursive(arr, p + 1, high); 
@@ -105,9 +105,9 @@ void quick_sort_recursive(RGB arr[], size_t low, size_t high) {
 // Sorting Algorithms
 
 // Bubble sort (O(n^2))
-void bubble_sort(RGB arr[], size_t capacity) {
-  for(size_t i = 0; i < (capacity - 1); i++) {
-    for(size_t j = 0; j < (capacity - (i + 1)); j ++) {
+void bubble_sort(RGB arr[], int capacity) {
+  for(int i = 0; i < (capacity - 1); i++) {
+    for(int j = 0; j < (capacity - (i + 1)); j ++) {
       if(arr[j].v > arr[j+1].v) {
         swap(arr[j], arr[j+1]);
       }
@@ -116,10 +116,10 @@ void bubble_sort(RGB arr[], size_t capacity) {
 }
 
 // Insertion sort (O(n^2))
-void insertion_sort(RGB arr[], size_t capacity) {
+void insertion_sort(RGB arr[], int capacity) {
   RGB temp;
-  size_t j;
-  for(size_t i = 1; i < capacity; i++) {
+  int j;
+  for(int i = 1; i < capacity; i++) {
     temp = arr[i];
     j = i - 1;
     while(j >= 0 && arr[j].v > temp.v) {
@@ -130,12 +130,12 @@ void insertion_sort(RGB arr[], size_t capacity) {
   }
 }
 
-//Selection sort (O(n^2))
-void selection_sort(RGB arr[], size_t capacity) {
-  size_t min_val;
-  for(size_t i = 0; i < capacity - 1; i++) {
+// Selection sort (O(n^2))
+void selection_sort(RGB arr[], int capacity) {
+  int min_val;
+  for(int i = 0; i < capacity - 1; i++) {
     min_val = i;
-    for(size_t j = i + 1; j < capacity; j++) {
+    for(int j = i + 1; j < capacity; j++) {
       if(arr[j].v < arr[min_val].v) {
         min_val = j;
       }
@@ -145,7 +145,7 @@ void selection_sort(RGB arr[], size_t capacity) {
 }
 
 
-//Quick sort (O(n*logn))
-void quick_sort(RGB arr[], size_t capacity) {
+// Quick sort (O(n*logn))
+void quick_sort(RGB arr[], int capacity) {
   quick_sort_recursive(arr, 0, capacity - 1);
 }
