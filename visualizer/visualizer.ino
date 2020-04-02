@@ -13,6 +13,7 @@ struct RGB {
 
 void setup() {
   Serial.begin(9600);
+  strip.begin();
   RGB leds_state[LED_SIZE] = {{0,0,0,0}};
   
   float curr_val = 0;
@@ -21,15 +22,12 @@ void setup() {
     leds_state[i] = temp;
     curr_val = curr_val + (256.0 / LED_SIZE);
   }
+  strip.show();
   
   randomize(leds_state, LED_SIZE);
   print_array(leds_state, LED_SIZE);
-  insertion_sort(leds_state, LED_SIZE);
+  quick_sort(leds_state, LED_SIZE);
   print_array(leds_state, LED_SIZE);
-
-  strip.begin();
-  strip.show();
-  colorWipe(strip.Color(255, 0, 0), 50);
 }
 
 void loop() {
@@ -53,11 +51,35 @@ void colorWipe(uint32_t c, uint8_t wait) {
   }
 }
 
-// Basic swap function for RGB instances
-void swap (RGB &a, RGB &b) { 
-  RGB temp = a; 
-  a = b; 
-  b = temp; 
+// Basic swap function reworked for RGB instances with short animation for LEDs
+void swap (RGB arr[], int a, int b) { 
+  RGB temp = arr[a]; 
+  arr[a] = arr[b]; 
+  arr[b] = temp;
+
+  strip.setPixelColor(a, strip.Color(0,0,0));
+  strip.setPixelColor(b, strip.Color(0,0,0));
+  strip.show();
+  delay(50);
+  strip.setPixelColor(a, strip.Color(arr[b].r,arr[b].g,arr[b].b));
+  strip.setPixelColor(b, strip.Color(arr[a].r,arr[a].g,arr[a].b));
+  strip.show();
+  delay(50);
+  strip.setPixelColor(a, strip.Color(0,0,0));
+  strip.setPixelColor(b, strip.Color(0,0,0));
+  strip.show();
+  delay(50);
+  strip.setPixelColor(a, strip.Color(arr[b].r,arr[b].g,arr[b].b));
+  strip.setPixelColor(b, strip.Color(arr[a].r,arr[a].g,arr[a].b));
+  strip.show();
+  delay(50);
+  strip.setPixelColor(a, strip.Color(0,0,0));
+  strip.setPixelColor(b, strip.Color(0,0,0));
+  strip.show();
+  delay(50);
+  strip.setPixelColor(a, strip.Color(arr[a].r,arr[a].g,arr[a].b));
+  strip.setPixelColor(b, strip.Color(arr[b].r,arr[b].g,arr[b].b));
+  strip.show();
 } 
 
 
@@ -74,8 +96,9 @@ void print_array (RGB arr[], int capacity) {
 void randomize (RGB arr[], int capacity) { 
   for (int i = capacity - 1; i > 0; i--) { 
     int j = random(i);
-    swap(arr[i], arr[j]); 
+    swap(arr, i, j); 
   } 
+  strip.show();
 } 
 
 // Helper function for quick_sort
@@ -86,10 +109,10 @@ int partition(RGB arr[], int low, int high) {
   for(int j = low; j <= high - 1; j++) {
     if(arr[j].v < pivot) {
       i++;
-      swap(arr[i], arr[j]);
+      swap(arr, i, j);
     }
   }
-  swap(arr[i+1], arr[high]);
+  swap(arr, i+1, high);
   return (i + 1);
 }
 // Helper function for quick sort
@@ -109,7 +132,7 @@ void bubble_sort(RGB arr[], int capacity) {
   for(int i = 0; i < (capacity - 1); i++) {
     for(int j = 0; j < (capacity - (i + 1)); j ++) {
       if(arr[j].v > arr[j+1].v) {
-        swap(arr[j], arr[j+1]);
+        swap(arr, j, j+1);
       }
     }
   }
@@ -120,13 +143,11 @@ void insertion_sort(RGB arr[], int capacity) {
   RGB temp;
   int j;
   for(int i = 1; i < capacity; i++) {
-    temp = arr[i];
-    j = i - 1;
-    while(j >= 0 && arr[j].v > temp.v) {
-      arr[j+1] = arr[j];
+    j = i;
+    while(j > 0 && arr[j-1].v > arr[j].v) {
+      swap(arr, j, j-1);
       j--;
     }
-    arr[j+1] = temp;
   }
 }
 
@@ -140,10 +161,13 @@ void selection_sort(RGB arr[], int capacity) {
         min_val = j;
       }
     }
-    swap(arr[i], arr[min_val]);
+    swap(arr, i, min_val);
   }
 }
 
+// Merge sort
+
+// Radix 
 
 // Quick sort (O(n*logn))
 void quick_sort(RGB arr[], int capacity) {
